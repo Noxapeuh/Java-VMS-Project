@@ -7,8 +7,9 @@ public class Truck extends Vehicle {
     private double height;
     private double weight;
     private int cargoCapacity;
+    private boolean haveTailLift;
 
-    public Truck(int id, String model, double mileage, String status, double rateData, String fuel, int horsePower, int passengersCapacity, double height, double weight, int cargoCapacity) {
+    public Truck(int id, String model, double mileage, String status, double rateData, String fuel, int horsePower, int passengersCapacity, double height, double weight, int cargoCapacity, boolean haveTailLift) {
         super(id, model, mileage, status, rateData);
         this.fuel = fuel;
         this.horsePower = horsePower;
@@ -16,6 +17,7 @@ public class Truck extends Vehicle {
         this.height = height;
         this.weight = weight;
         this.cargoCapacity = cargoCapacity;
+        this.haveTailLift = haveTailLift;
     }
 
 }
