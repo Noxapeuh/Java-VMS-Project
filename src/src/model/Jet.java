@@ -1,5 +1,6 @@
 package model;
 import contract.Rentable;
+import exception.IsNotRentable;
 
 
 public class Jet extends Vehicle implements Rentable{
@@ -34,8 +35,8 @@ public class Jet extends Vehicle implements Rentable{
 
     @Override
     public boolean isRentable(){
-        if (status != "Available"){
-
+        if (!getStatus().equalsIgnoreCase("Available")){
+            throw new IsNotRentable("The vehicle can't be rented");
         }
     }
 
