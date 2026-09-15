@@ -1,5 +1,5 @@
 import model.Vehicle;
 
 public interface Rentable {
-    public boolean rent(Vehicle vehicle);
+    public boolean isRentable(Vehicle vehicle);
 }
