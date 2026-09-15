@@ -20,4 +20,21 @@ public class Truck extends Vehicle {
         this.haveTailLift = haveTailLift;
     }
 
+    @Override
+    public String toString() {
+        return "Truck{" +
+                "id=" + getId() +
+                ", model='" + getModel() + '\'' +
+                ", mileage=" + getMileage() +
+                ", status='" + getStatus() + '\'' +
+                ", rateData=" + getRateData() +
+                ", fuel='" + fuel + '\'' +
+                ", horsePower=" + horsePower +
+                ", passengersCapacity=" + passengersCapacity +
+                ", height=" + height +
+                ", weight=" + weight +
+                ", cargoCapacity=" + cargoCapacity +
+                ", haveTailLift=" + haveTailLift +
+                '}';
+    }
 }
