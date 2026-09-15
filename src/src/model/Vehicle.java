@@ -8,5 +8,6 @@ public abstract class Vehicle {
     private double rateData;
     private String fuel;
     private int horsePower;
+    private int capacity;
 
 }
