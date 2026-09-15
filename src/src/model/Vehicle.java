@@ -15,4 +15,23 @@ public abstract class Vehicle {
         this.rateData = rateData;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public double getMileage() {
+        return mileage;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public double getRateData() {
+        return rateData;
+    }
 }
