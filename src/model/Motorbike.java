@@ -60,4 +60,22 @@ public class Motorbike extends Vehicle implements Rentable{
         return true;
     }
 
+    public String toString(){
+        return
+                "ID: " + getId() + "\n" +
+                        "Model: " + getModel() + "\n" +
+                        "Mileage: " + getMileage() + "\n" +
+                        "Status: " + getStatus() + "\n" +
+                        "Rate Data: " + getRateData() + "\n" +
+                        "Type: " + type + "\n" +
+                        "Fuel: " + fuel + "\n" +
+                        "Fuel capacity: " + fuelCapacity + "\n" +
+                        "Horse power: " + horsePower + "\n" +
+                        "Passenger capacity: " + passengersCapacity + "\n" +
+                        "Cylinders: " + cylinders + "\n" +
+                        "Required license: " + requiredLicense + "\n" +
+                        "Saddle height: " + saddleHeight + "\n" +
+                        "Has luggage compartment: " + hasLuggageCompartment + "\n" +
+                        "Brand: " + getBrand() + "\n";
+    }
 }
