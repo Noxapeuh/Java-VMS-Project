@@ -12,7 +12,7 @@ public abstract class Car extends Vehicle {
     private double co2Emission;
 
     public Car(int id, String brand, String model, double mileage, String status, double rateData, String finition, double topSpeed, double zeroToHundred, String gearbox, int seatCount, int suitcaseCapacity, int doorCount, double co2Emission) {
-        super(id, brand, model, mileage, status, rateData);
+        super(id, model, mileage, status, rateData, brand);
 
         this.finition = finition;
         this.topSpeed = topSpeed;
