@@ -1,8 +1,9 @@
 package model;
 
+import contract.Rentable;
 import exception.IsNotRentable;
 
-public class Truck extends Vehicle {
+public class Truck extends Vehicle implements Rentable {
     private String fuel;
     private int horsePower;
     private int passengersCapacity;
