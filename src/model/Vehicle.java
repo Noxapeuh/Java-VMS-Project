@@ -6,7 +6,7 @@ public abstract class Vehicle {
     private double mileage;
     private String status;
     private double rateData;
-    private String brand
+    private String brand;
 
     public Vehicle(int id, String model, double mileage, String status, double rateData, String brand){
         this.id = id;

@@ -18,8 +18,8 @@ public class Jet extends Vehicle implements Rentable{
 
     public Jet(int id, String model, double mileage, String status, double rateData,String type, String motor, int passengersCapacity, int releaseYear,
                int maxRange, int cruisingSpeed, int engineCount, int bedCount, boolean hasWifi,
-               boolean crewIncluded, String baseAirport){
-        super(id, model, mileage, status, rateData);
+               boolean crewIncluded, String baseAirport, String brand){
+        super(id, model, mileage, status, rateData, brand);
         this.type = type;
         this.motor = motor;
         this.passengersCapacity = passengersCapacity;
