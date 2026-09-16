@@ -46,4 +46,6 @@ public abstract class Vehicle {
     public void setRateData(double rateData) {
         this.rateData = rateData;
     }
+
+    public abstract boolean isRentable();
 }

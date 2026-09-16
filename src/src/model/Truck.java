@@ -1,5 +1,7 @@
 package model;
 
+import exception.IsNotRentable;
+
 public class Truck extends Vehicle {
     private String fuel;
     private int horsePower;
@@ -36,5 +38,13 @@ public class Truck extends Vehicle {
                 ", cargoCapacity=" + cargoCapacity +
                 ", haveTailLift=" + haveTailLift +
                 '}';
+    }
+
+    @Override
+    public boolean isRentable() {
+        if (!getStatus().equalsIgnoreCase("Available")) {
+            throw new IsNotRentable("The vehicle can't be rented");
+        }
+        return true;
     }
 }
