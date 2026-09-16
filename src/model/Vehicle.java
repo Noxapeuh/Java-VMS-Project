@@ -48,4 +48,8 @@ public abstract class Vehicle {
     public void setRateData(double rateData) {
         this.rateData = rateData;
     }
+
+    public String getBrand() {
+        return brand;
+    }
 }
