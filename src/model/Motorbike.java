@@ -1,6 +1,7 @@
 package model;
-
-public class Motorbike extends Vehicle {
+import exception.IsNotRentable;
+import contract.Rentable;
+public class Motorbike extends Vehicle implements Rentable{
     private String fuel;
     private int fuelCapacity;
     private int horsePower;
@@ -11,8 +12,8 @@ public class Motorbike extends Vehicle {
     private double saddleHeight;
     private boolean hasLuggageCompartment;
 
-    public Motorbike(int id, String model, double mileage, String status, double rateData, String fuel,int fuelCapacity, int horsePower, int passengersCapacity, String type, int cylinders, String requiredLicense, double saddleHeight, boolean hasLuggageCompartment) {
-        super(id, model, mileage, status, rateData);
+    public Motorbike(int id, String model, double mileage, String status, double rateData, String fuel,int fuelCapacity, int horsePower, int passengersCapacity, String type, int cylinders, String requiredLicense, double saddleHeight, boolean hasLuggageCompartment, String brand) {
+        super(id, model, mileage, status, rateData, brand);
         this.fuel = fuel;
         this.fuelCapacity = fuelCapacity;
         this.horsePower = horsePower;
@@ -51,6 +52,12 @@ public class Motorbike extends Vehicle {
         return hasLuggageCompartment;
     }
 
-
+    @Override
+    public boolean isRentable() {
+        if (!getStatus().equalsIgnoreCase("Available")) {
+            throw new IsNotRentable("The vehicle can't be rented");
+        }
+        return true;
+    }
 
 }
