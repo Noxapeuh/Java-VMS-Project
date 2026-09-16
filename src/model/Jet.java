@@ -41,11 +41,25 @@ public class Jet extends Vehicle implements Rentable{
         return true;
     }
 
-    public String toString() {
-        return String.format(
-                "Jet [ID=%d, Model=%s, Type=%s, Motor=%s, Passengers=%d, Year=%d, Speed=%d kts, Range=%d nm, Engines=%d, Beds=%d, Wifi=%b, Crew=%b, Airport=%s, Status=%s, Mileage=%.1f, Rate=%.2f]",
-                getId(), getModel(), type, motor, passengersCapacity, releaseYear, cruisingSpeed, maxRange, engineCount, bedCount, hasWifi, crewIncluded, baseAirport, getStatus(), getMileage(), getRateData()
-        );
+    public String toString(){
+        return
+                "ID: " + getId() + "\n" +
+                        "Model: " + getModel() + "\n" +
+                        "Mileage: " + getMileage() + "\n" +
+                        "Status: " + getStatus() + "\n" +
+                        "Rate Data: " + getRateData() + "\n" +
+                        "Type: " + type + "\n" +
+                        "Motor: " + motor + "\n" +
+                        "Passenger capacity: " + passengersCapacity + "\n" +
+                        "Release year: " + releaseYear + "\n" +
+                        "Max range: " + maxRange + "\n" +
+                        "Cruising speed: " + cruisingSpeed + "\n" +
+                        "Number of engines: " + engineCount + "\n" +
+                        "Number of beds: " + bedCount + "\n" +
+                        "Has wifi: " + hasWifi + "\n" +
+                        "Is crew included: " + crewIncluded + "\n" +
+                        "Base airport: " + baseAirport + "\n" +
+                        "Brand: " + getBrand() + "\n";
     }
 
 
