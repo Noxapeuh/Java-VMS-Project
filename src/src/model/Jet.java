@@ -38,6 +38,9 @@ public class Jet extends Vehicle implements Rentable{
         if (!getStatus().equalsIgnoreCase("Available")){
             throw new IsNotRentable("The vehicle can't be rented");
         }
+        return true;
     }
+
+
 
 }

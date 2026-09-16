@@ -51,11 +51,6 @@ public class Motorbike extends Vehicle {
         return hasLuggageCompartment;
     }
 
-    @Override
-    public boolean isRentable(){
-        if(getStatus().equals("Available")){
 
-        }
-    }
 
 }
