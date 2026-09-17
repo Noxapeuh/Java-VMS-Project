@@ -9,6 +9,12 @@ public abstract class Vehicle {
     private String brand;
 
     public Vehicle(int id, String model, double mileage, String status, double rateData, String brand){
+        if (id < 0) {
+            throw new IllegalArgumentException("Vehicle id must be >= 0");
+        }
+        if (rateData <= 0) {
+            throw new IllegalArgumentException("Vehicle rateData must be > 0");
+        }
         this.id = id;
         this.model = model;
         this.mileage = mileage;

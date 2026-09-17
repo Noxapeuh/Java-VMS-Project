@@ -17,4 +17,20 @@ public class FuelCar extends Car{
         this.consumption = consumption;
 
     }
+
+    @Override
+    public String toString() {
+        return "FuelCar{" +
+                "id=" + getId() +
+                ", brand='" + getBrand() + '\'' +
+                ", model='" + getModel() + '\'' +
+                ", mileage=" + getMileage() +
+                ", status='" + getStatus() + '\'' +
+                ", rateData=" + getRateData() +
+                ", fuelType='" + fuelType + '\'' +
+                ", engineSize='" + engineSize + '\'' +
+                ", engineLiter=" + engineLiter +
+                ", consumption=" + consumption +
+                '}';
+    }
 }

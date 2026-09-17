@@ -22,4 +22,23 @@ public class HybridCar extends Car{
         this.engineLiter = engineLiter;
         this.consumption = consumption;
     }
+
+    @Override
+    public String toString() {
+        return "HybridCar{" +
+                "id=" + getId() +
+                ", brand='" + getBrand() + '\'' +
+                ", model='" + getModel() + '\'' +
+                ", mileage=" + getMileage() +
+                ", status='" + getStatus() + '\'' +
+                ", rateData=" + getRateData() +
+                ", range=" + range +
+                ", batteryKw=" + batteryKw +
+                ", rechargeable=" + rechargeable +
+                ", fuelType='" + fuelType + '\'' +
+                ", engineSize='" + engineSize + '\'' +
+                ", engineLiter=" + engineLiter +
+                ", consumption=" + consumption +
+                '}';
+    }
 }

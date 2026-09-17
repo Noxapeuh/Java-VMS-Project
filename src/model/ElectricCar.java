@@ -12,4 +12,18 @@ public class ElectricCar extends Car{
         this.batteryKw = batteryKw;
 
     }
+
+    @Override
+    public String toString() {
+        return "ElectricCar{" +
+                "id=" + getId() +
+                ", brand='" + getBrand() + '\'' +
+                ", model='" + getModel() + '\'' +
+                ", mileage=" + getMileage() +
+                ", status='" + getStatus() + '\'' +
+                ", rateData=" + getRateData() +
+                ", range=" + range +
+                ", batteryKw=" + batteryKw +
+                '}';
+    }
 }
