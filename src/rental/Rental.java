@@ -3,13 +3,15 @@ package rental;
 import model.Vehicle;
 
 public class Rental {
+    private String rentalId;
     private Vehicle vehicle;
     private String customerName;
     private int period;
     private String quote;
     private String status;
 
-    public Rental(Vehicle vehicle, String customerName, int period, String status) {
+    public Rental(String rentalId, Vehicle vehicle, String customerName, int period, String status) {
+        this.rentalId = rentalId;
         this.vehicle = vehicle;
         this.customerName = customerName;
         this.period = period;
