@@ -1,5 +1,6 @@
 package app;
 import model.*;
+import rental.*;
 
 
 public class MainApp {
@@ -11,5 +12,14 @@ public class MainApp {
 
         Motorbike motorbike = new Motorbike(3, "Harley-Davidson Street 750", 8000, "Available", 100.0, "Petrol", 13, 53, 2, "Cruiser", 2, "A", 735.0, true, "Harley-Davidson");
         System.out.println(motorbike);
+
+        // register vehicles in repository so Rental can look them up
+        repository.VehicleRepositoryImpl repo = repository.VehicleRepositoryImpl.getInstance();
+        repo.addVehicle(truck);
+        repo.addVehicle(jet);
+        repo.addVehicle(motorbike);
+
+        Rental rent = new Rental();
+        System.out.println(rent);
     }
 }

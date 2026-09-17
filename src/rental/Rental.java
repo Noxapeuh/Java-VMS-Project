@@ -1,5 +1,5 @@
 package rental;
-
+import java.util.Scanner;
 import model.Vehicle;
 
 public class Rental {
@@ -18,6 +18,31 @@ public class Rental {
         this.quote =  (vehicle.getRateData() * period) + "$";
         this.status = status;
     }
+
+    public Rental(){
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter customer name: ");
+        this.customerName = sc.nextLine();
+        System.out.print("Enter rental period (in days): ");
+        this.period = sc.nextInt();
+        sc.nextLine();
+        System.out.print("Enter vehicle ID: ");
+        int vehicleId = sc.nextInt();
+        sc.nextLine();
+        // Use singleton repository (populated by main app)
+        repository.VehicleRepository repo = repository.VehicleRepositoryImpl.getInstance();
+        this.vehicle = repo.getVehicleById(vehicleId);
+        if (this.vehicle == null) {
+            throw new IllegalArgumentException("No vehicle found with id: " + vehicleId);
+        }
+        // compute quote after vehicle is assigned
+        this.quote = (vehicle.getRateData() * period) + "$";
+        this.status = "Pending";
+        this.rentalId = "R" + System.currentTimeMillis();
+        System.out.print("The price for the rental is: " + this.quote);
+        System.out.print("Rental created successfully for " + customerName + " for a period of " + period + " days. The quote is: " + quote + " with vehicle " + vehicleId);
+    }
+
 
     public Vehicle getVehicle() {
         return vehicle;
@@ -48,7 +73,5 @@ public class Rental {
                 ", status='" + status + '\'' +
                 "}\n";
     }
-
-
 }
 
