@@ -2,10 +2,8 @@ package repository;
 
 import model.*;
 
-public interface VehicleRepository {
+public interface VehicleRepository extends Repository<Vehicle> {
     Vehicle getVehicleById(int id);
-
-    // convenience typed accessors
     Car getCarById(int id);
     Truck getTruckById(int id);
     Motorbike getMotorbikeById(int id);
@@ -13,7 +11,5 @@ public interface VehicleRepository {
     ElectricCar getElectricCarById(int id);
     FuelCar getFuelCarById(int id);
     HybridCar getHybridCarById(int id);
-
-    // allow registering vehicles created elsewhere (e.g., MainApp)
     void addVehicle(Vehicle vehicle);
 }

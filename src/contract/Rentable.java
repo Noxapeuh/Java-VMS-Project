@@ -1,8 +1,7 @@
 package contract;
 
-import model.Vehicle;
-
 public interface Rentable {
-    public boolean isRentable();
-
+    boolean isRentable();
+    void rent();
+    void returnVehicle();
 }

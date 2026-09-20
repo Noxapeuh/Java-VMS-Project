@@ -1,9 +1,9 @@
 package model;
+
 import contract.Rentable;
 import exception.IsNotRentable;
 
-
-public class Jet extends Vehicle implements Rentable{
+public class Jet extends Vehicle implements Rentable {
     private String type;
     private String motor;
     private int passengersCapacity;
@@ -16,9 +16,7 @@ public class Jet extends Vehicle implements Rentable{
     private boolean crewIncluded;
     private String baseAirport;
 
-    public Jet(int id, String model, double mileage, String status, double rateData,String type, String motor, int passengersCapacity, int releaseYear,
-               int maxRange, int cruisingSpeed, int engineCount, int bedCount, boolean hasWifi,
-               boolean crewIncluded, String baseAirport, String brand){
+    public Jet(int id, String model, double mileage, String status, double rateData, String type, String motor, int passengersCapacity, int releaseYear, int maxRange, int cruisingSpeed, int engineCount, int bedCount, boolean hasWifi, boolean crewIncluded, String baseAirport, String brand) {
         super(id, model, mileage, status, rateData, brand);
         this.type = type;
         this.motor = motor;
@@ -33,36 +31,89 @@ public class Jet extends Vehicle implements Rentable{
         this.baseAirport = baseAirport;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public String getMotor() {
+        return motor;
+    }
+
+    public int getPassengersCapacity() {
+        return passengersCapacity;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public int getMaxRange() {
+        return maxRange;
+    }
+
+    public int getCruisingSpeed() {
+        return cruisingSpeed;
+    }
+
+    public int getEngineCount() {
+        return engineCount;
+    }
+
+    public int getBedCount() {
+        return bedCount;
+    }
+
+    public boolean isHasWifi() {
+        return hasWifi;
+    }
+
+    public boolean isCrewIncluded() {
+        return crewIncluded;
+    }
+
+    public String getBaseAirport() {
+        return baseAirport;
+    }
+
     @Override
-    public boolean isRentable(){
-        if (!getStatus().equalsIgnoreCase("Available")){
+    public boolean isRentable() {
+        if (!getStatus().equalsIgnoreCase("Available")) {
             throw new IsNotRentable("The vehicle can't be rented");
         }
         return true;
     }
 
-    public String toString(){
-        return
-                "ID: " + getId() + "\n" +
-                        "Model: " + getModel() + "\n" +
-                        "Mileage: " + getMileage() + "\n" +
-                        "Status: " + getStatus() + "\n" +
-                        "Rate Data: " + getRateData() + "\n" +
-                        "Type: " + type + "\n" +
-                        "Motor: " + motor + "\n" +
-                        "Passenger capacity: " + passengersCapacity + "\n" +
-                        "Release year: " + releaseYear + "\n" +
-                        "Max range: " + maxRange + "\n" +
-                        "Cruising speed: " + cruisingSpeed + "\n" +
-                        "Number of engines: " + engineCount + "\n" +
-                        "Number of beds: " + bedCount + "\n" +
-                        "Has wifi: " + hasWifi + "\n" +
-                        "Is crew included: " + crewIncluded + "\n" +
-                        "Base airport: " + baseAirport + "\n" +
-                        "Brand: " + getBrand() + "\n";
+    @Override
+    public void rent() {
+        if (!isRentable()) {
+            throw new IsNotRentable("The vehicle is not rentable");
+        }
+        setStatus("Rented");
     }
 
+    @Override
+    public void returnVehicle() {
+        setStatus("Available");
+    }
 
-
-
+    @Override
+    public String toString() {
+        return "ID: " + getId() + "\n" +
+                "Model: " + getModel() + "\n" +
+                "Mileage: " + getMileage() + "\n" +
+                "Status: " + getStatus() + "\n" +
+                "Rate Data: " + getRateData() + "\n" +
+                "Type: " + type + "\n" +
+                "Motor: " + motor + "\n" +
+                "Passenger capacity: " + passengersCapacity + "\n" +
+                "Release year: " + releaseYear + "\n" +
+                "Max range: " + maxRange + "\n" +
+                "Cruising speed: " + cruisingSpeed + "\n" +
+                "Number of engines: " + engineCount + "\n" +
+                "Number of beds: " + bedCount + "\n" +
+                "Has wifi: " + hasWifi + "\n" +
+                "Is crew included: " + crewIncluded + "\n" +
+                "Base airport: " + baseAirport + "\n" +
+                "Brand: " + getBrand() + "\n";
+    }
 }

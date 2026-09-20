@@ -1,77 +1,121 @@
 package rental;
-import java.util.Scanner;
+
+import model.Customer;
 import model.Vehicle;
 
 public class Rental {
-    private String rentalId;
-    private Vehicle vehicle;
-    private String customerName;
-    private int period;
-    private String quote;
+    private final String rentalId;
+    private final Customer customer;
+    private final Vehicle vehicle;
+    private final int period;
+    private final PriceBreakdown priceBreakdown;
     private String status;
 
-    public Rental(String rentalId, Vehicle vehicle, String customerName, int period, String status) {
+    public static class PriceBreakdown {
+        private final double baseRate;
+        private final int duration;
+        private final String policyName;
+        private final double totalPrice;
+
+        public PriceBreakdown(double baseRate, int duration, String policyName, double totalPrice) {
+            this.baseRate = baseRate;
+            this.duration = duration;
+            this.policyName = policyName;
+            this.totalPrice = totalPrice;
+        }
+
+        public double getBaseRate() {
+            return baseRate;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public String getPolicyName() {
+            return policyName;
+        }
+
+        public double getTotalPrice() {
+            return totalPrice;
+        }
+
+        @Override
+        public String toString() {
+            return "PriceBreakdown{" +
+                    "baseRate=" + baseRate +
+                    ", duration=" + duration +
+                    ", policyName='" + policyName + '\'' +
+                    ", totalPrice=" + totalPrice +
+                    '}';
+        }
+    }
+
+    public Rental() {
+        this("RENT-" + System.currentTimeMillis(), new Customer(0, "Guest", "", ""), null, 1, new PriceBreakdown(0.0, 1, "Standard", 0.0), "Pending");
+    }
+
+    public Rental(String rentalId, Customer customer, Vehicle vehicle, int period, PriceBreakdown priceBreakdown, String status) {
         this.rentalId = rentalId;
+        this.customer = customer;
         this.vehicle = vehicle;
-        this.customerName = customerName;
         this.period = period;
-        this.quote =  (vehicle.getRateData() * period) + "$";
+        this.priceBreakdown = priceBreakdown;
         this.status = status;
     }
 
-    public Rental(){
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter customer name: ");
-        this.customerName = sc.nextLine();
-        System.out.print("Enter rental period (in days): ");
-        this.period = sc.nextInt();
-        sc.nextLine();
-        System.out.print("Enter vehicle ID: ");
-        int vehicleId = sc.nextInt();
-        sc.nextLine();
-        // Use singleton repository (populated by main app)
-        repository.VehicleRepository repo = repository.VehicleRepositoryImpl.getInstance();
-        this.vehicle = repo.getVehicleById(vehicleId);
-        if (this.vehicle == null) {
-            throw new IllegalArgumentException("No vehicle found with id: " + vehicleId);
-        }
-        // compute quote after vehicle is assigned
-        this.quote = (vehicle.getRateData() * period) + "$";
-        this.status = "Pending";
-        this.rentalId = "R" + System.currentTimeMillis();
-        System.out.print("The price for the rental is: " + this.quote);
-        System.out.print("Rental created successfully for " + customerName + " for a period of " + period + " days. The quote is: " + quote + " with vehicle " + vehicleId);
+    public Rental(String rentalId, Vehicle vehicle, String customerName, int period, String status) {
+        this(rentalId, new Customer(0, customerName, "", ""), vehicle, period, new PriceBreakdown(vehicle != null ? vehicle.getRateData() : 0.0, period, "Standard", (vehicle != null ? vehicle.getRateData() : 0.0) * period), status);
     }
 
+    public String getRentalId() {
+        return rentalId;
+    }
 
-    public Vehicle getVehicle() {
-        return vehicle;
+    public Customer getCustomer() {
+        return customer;
     }
 
     public String getCustomerName() {
-        return customerName;
+        return customer != null ? customer.getName() : "";
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
     public int getPeriod() {
         return period;
     }
 
+    public PriceBreakdown getPriceBreakdown() {
+        return priceBreakdown;
+    }
+
     public String getQuote() {
-        return quote;
+        if (priceBreakdown != null) {
+            return priceBreakdown.getTotalPrice() + "$";
+        }
+        return (vehicle != null ? vehicle.getRateData() * period : 0.0) + "$";
     }
 
     public String getStatus() {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
     public String toString() {
-        return "\nRental{" +
-                "vehicle=" + vehicle.toString() +
-                ", customerName='" + customerName + '\'' +
+        return "Rental{" +
+                "rentalId='" + rentalId + '\'' +
+                ", customer=" + getCustomerName() +
+                ", vehicle=" + (vehicle != null ? vehicle.getModel() : "null") +
                 ", period=" + period +
-                ", quote='" + quote + '\'' +
+                ", quote='" + getQuote() + '\'' +
                 ", status='" + status + '\'' +
-                "}\n";
+                '}';
     }
 }
-

@@ -1,21 +1,41 @@
 package model;
 
-public class FuelCar extends Car{
-
+public class FuelCar extends Car {
     private String fuelType;
     private String engineSize;
     private double engineLiter;
     private double consumption;
 
-
     public FuelCar(int id, String brand, String model, double mileage, String status, double rateData, String finition, double topSpeed, double zeroToHundred, String gearbox, int seatCount, int suitcaseCapacity, int doorCount, double co2Emission) {
         super(id, brand, model, mileage, status, rateData, finition, topSpeed, zeroToHundred, gearbox, seatCount, suitcaseCapacity, doorCount, co2Emission);
+        this.fuelType = "Gasoline";
+        this.engineSize = "2.0L";
+        this.engineLiter = 2.0;
+        this.consumption = 6.5;
+    }
 
+    public FuelCar(int id, String brand, String model, double mileage, String status, double rateData, String finition, double topSpeed, double zeroToHundred, String gearbox, int seatCount, int suitcaseCapacity, int doorCount, double co2Emission, String fuelType, String engineSize, double engineLiter, double consumption) {
+        super(id, brand, model, mileage, status, rateData, finition, topSpeed, zeroToHundred, gearbox, seatCount, suitcaseCapacity, doorCount, co2Emission);
         this.fuelType = fuelType;
         this.engineSize = engineSize;
         this.engineLiter = engineLiter;
         this.consumption = consumption;
+    }
 
+    public String getFuelType() {
+        return fuelType;
+    }
+
+    public String getEngineSize() {
+        return engineSize;
+    }
+
+    public double getEngineLiter() {
+        return engineLiter;
+    }
+
+    public double getConsumption() {
+        return consumption;
     }
 
     @Override

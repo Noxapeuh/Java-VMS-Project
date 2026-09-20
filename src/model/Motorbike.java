@@ -1,7 +1,9 @@
 package model;
-import exception.IsNotRentable;
+
 import contract.Rentable;
-public class Motorbike extends Vehicle implements Rentable{
+import exception.IsNotRentable;
+
+public class Motorbike extends Vehicle implements Rentable {
     private String fuel;
     private int fuelCapacity;
     private int horsePower;
@@ -12,7 +14,7 @@ public class Motorbike extends Vehicle implements Rentable{
     private double saddleHeight;
     private boolean hasLuggageCompartment;
 
-    public Motorbike(int id, String model, double mileage, String status, double rateData, String fuel,int fuelCapacity, int horsePower, int passengersCapacity, String type, int cylinders, String requiredLicense, double saddleHeight, boolean hasLuggageCompartment, String brand) {
+    public Motorbike(int id, String model, double mileage, String status, double rateData, String fuel, int fuelCapacity, int horsePower, int passengersCapacity, String type, int cylinders, String requiredLicense, double saddleHeight, boolean hasLuggageCompartment, String brand) {
         super(id, model, mileage, status, rateData, brand);
         this.fuel = fuel;
         this.fuelCapacity = fuelCapacity;
@@ -24,30 +26,39 @@ public class Motorbike extends Vehicle implements Rentable{
         this.saddleHeight = saddleHeight;
         this.hasLuggageCompartment = hasLuggageCompartment;
     }
+
     public String getFuel() {
         return fuel;
     }
+
     public int getFuelCapacity() {
         return fuelCapacity;
     }
+
     public int getHorsePower() {
         return horsePower;
     }
+
     public int getPassengersCapacity() {
         return passengersCapacity;
     }
+
     public String getType() {
         return type;
     }
+
     public int getCylinders() {
         return cylinders;
     }
+
     public String getRequiredLicense() {
         return requiredLicense;
     }
+
     public double getSaddleHeight() {
         return saddleHeight;
     }
+
     public boolean isHasLuggageCompartment() {
         return hasLuggageCompartment;
     }
@@ -60,22 +71,35 @@ public class Motorbike extends Vehicle implements Rentable{
         return true;
     }
 
-    public String toString(){
-        return
-                "ID: " + getId() + "\n" +
-                        "Model: " + getModel() + "\n" +
-                        "Mileage: " + getMileage() + "\n" +
-                        "Status: " + getStatus() + "\n" +
-                        "Rate Data: " + getRateData() + "\n" +
-                        "Type: " + type + "\n" +
-                        "Fuel: " + fuel + "\n" +
-                        "Fuel capacity: " + fuelCapacity + "\n" +
-                        "Horse power: " + horsePower + "\n" +
-                        "Passenger capacity: " + passengersCapacity + "\n" +
-                        "Cylinders: " + cylinders + "\n" +
-                        "Required license: " + requiredLicense + "\n" +
-                        "Saddle height: " + saddleHeight + "\n" +
-                        "Has luggage compartment: " + hasLuggageCompartment + "\n" +
-                        "Brand: " + getBrand() + "\n";
+    @Override
+    public void rent() {
+        if (!isRentable()) {
+            throw new IsNotRentable("The vehicle is not rentable");
+        }
+        setStatus("Rented");
+    }
+
+    @Override
+    public void returnVehicle() {
+        setStatus("Available");
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId() + "\n" +
+                "Model: " + getModel() + "\n" +
+                "Mileage: " + getMileage() + "\n" +
+                "Status: " + getStatus() + "\n" +
+                "Rate Data: " + getRateData() + "\n" +
+                "Type: " + type + "\n" +
+                "Fuel: " + fuel + "\n" +
+                "Fuel capacity: " + fuelCapacity + "\n" +
+                "Horse power: " + horsePower + "\n" +
+                "Passenger capacity: " + passengersCapacity + "\n" +
+                "Cylinders: " + cylinders + "\n" +
+                "Required license: " + requiredLicense + "\n" +
+                "Saddle height: " + saddleHeight + "\n" +
+                "Has luggage compartment: " + hasLuggageCompartment + "\n" +
+                "Brand: " + getBrand() + "\n";
     }
 }

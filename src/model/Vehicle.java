@@ -1,6 +1,9 @@
 package model;
 
-public abstract class Vehicle {
+import contract.Identifiable;
+import java.util.Objects;
+
+public abstract class Vehicle implements Identifiable, Comparable<Vehicle> {
     private final int id;
     private String model;
     private double mileage;
@@ -8,13 +11,7 @@ public abstract class Vehicle {
     private double rateData;
     private String brand;
 
-    public Vehicle(int id, String model, double mileage, String status, double rateData, String brand){
-        if (id < 0) {
-            throw new IllegalArgumentException("Vehicle id must be >= 0");
-        }
-        if (rateData <= 0) {
-            throw new IllegalArgumentException("Vehicle rateData must be > 0");
-        }
+    public Vehicle(int id, String model, double mileage, String status, double rateData, String brand) {
         this.id = id;
         this.model = model;
         this.mileage = mileage;
@@ -23,6 +20,7 @@ public abstract class Vehicle {
         this.brand = brand;
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -43,6 +41,14 @@ public abstract class Vehicle {
         return rateData;
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     public void setMileage(double mileage) {
         this.mileage = mileage;
     }
@@ -55,7 +61,25 @@ public abstract class Vehicle {
         this.rateData = rateData;
     }
 
-    public String getBrand() {
-        return brand;
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    @Override
+    public int compareTo(Vehicle other) {
+        return Integer.compare(this.id, other.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vehicle)) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return id == vehicle.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
