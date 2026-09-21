@@ -1,20 +1,15 @@
 package app;
 
-import concurrent.ConcurrencySimulator;
-import concurrent.ConcurrencySimulator.SimulationResult;
+import contract.PricingOption;
 import contract.PricingPolicy;
 import exception.RentalException;
 import model.*;
 import ordering.VehicleComparators;
 import rental.Fleet;
 import rental.Rental;
-import rental.Rental.PriceBreakdown;
-import report.PolicyInspector;
-import report.ReportService;
 import repository.FileStorageService;
 import repository.GenericRepository;
 import repository.Repository;
-import repository.VehicleRepositoryImpl;
 import service.*;
 import test.SystemTest;
 
@@ -31,7 +26,7 @@ public class MainApp {
     private static final String RENTALS_FILE = "data/rentals.txt";
 
     public static void main(String[] args) {
-        Repository<Vehicle> vehicleRepo = VehicleRepositoryImpl.getInstance();
+        Repository<Vehicle> vehicleRepo = new GenericRepository<>();
         Repository<Customer> customerRepo = new GenericRepository<>();
         RentalService rentalService = new RentalService(vehicleRepo, customerRepo);
         Fleet fleet = new Fleet();
@@ -41,16 +36,16 @@ public class MainApp {
         List<Vehicle> loadedVehicles = FileStorageService.loadVehicles(VEHICLES_FILE);
         if (loadedVehicles.isEmpty()) {
             Truck defaultTruck = new Truck(1, "Volvo FH", 120000, "Available", 150.0, "Diesel", 500, 2, 4.0, 8000.0, 20000, true, "Volvo");
-            Jet defaultJet = new Jet(2, "HondaJet Elite", 500, "Available", 12000, "Light Jet", "GE Honda HF120 turbofan", 6, 2018, 5000, 782, 2, 0, true, false, "CDG", "Honda");
+            FuelCar defaultCar = new FuelCar(2, "Toyota", "Corolla", 45000.0, "Available", 60.0, "Standard", 180.0, 9.5, "Manual", 5, 450, 5, 120.0);
             Motorbike defaultBike = new Motorbike(3, "Harley-Davidson Street 750", 8000, "Available", 100.0, "Petrol", 13, 53, 2, "Cruiser", 2, "A", 735.0, true, "Harley-Davidson");
-            FuelCar defaultCar = new FuelCar(4, "Toyota", "Corolla", 45000.0, "Available", 60.0, "Standard", 180.0, 9.5, "Manual", 5, 450, 5, 120.0);
-            ElectricCar defaultElectric = new ElectricCar(5, "Tesla", "Model 3", 25000.0, "Available", 90.0, "Long Range", 233.0, 4.4, "Auto", 5, 425, 5, 0.0);
+            ElectricCar defaultElectric = new ElectricCar(4, "Tesla", "Model 3", 25000.0, "Available", 90.0, "Long Range", 233.0, 4.4, "Auto", 5, 425, 5, 0.0);
+            HybridCar defaultHybrid = new HybridCar(5, "Toyota", "Prius", 60000.0, "Available", 70.0, "Hybrid", 170.0, 10.5, "Auto", 5, 400, 5, 75.0);
 
             vehicleRepo.add(defaultTruck);
-            vehicleRepo.add(defaultJet);
-            vehicleRepo.add(defaultBike);
             vehicleRepo.add(defaultCar);
+            vehicleRepo.add(defaultBike);
             vehicleRepo.add(defaultElectric);
+            vehicleRepo.add(defaultHybrid);
         } else {
             vehicleRepo.addAll(loadedVehicles);
         }
@@ -140,22 +135,37 @@ public class MainApp {
                     System.out.println("Return error: " + e.getMessage());
                 }
             } else if ("5".equals(input)) {
-                Fleet currentFleet = new Fleet();
-                currentFleet.addAll(vehicleRepo.getAll());
                 System.out.println("\n--- Analytical Reports ---");
-                List<Vehicle> available = ReportService.findEligibleVehicles(currentFleet, v -> "Available".equalsIgnoreCase(v.getStatus()));
-                System.out.println("Available vehicles (Stream): " + available.size());
-                List<Vehicle> due = ReportService.inspectWithExplicitIterator(currentFleet, 80000.0);
-                System.out.println("Vehicles inspected over 80,000 km (Iterator): " + due.size());
-                double revenue = ReportService.calculateTotalRevenue(rentalService.getRentalHistory());
+                long availableCount = fleet.getVehicles().stream()
+                        .filter(v -> "Available".equalsIgnoreCase(v.getStatus()))
+                        .count();
+                System.out.println("Available vehicles (Stream): " + availableCount);
+
+                long dueCount = 0;
+                java.util.Iterator<Vehicle> it = fleet.iterator();
+                while (it.hasNext()) {
+                    Vehicle v = it.next();
+                    if (v.getMileage() >= 80000.0) {
+                        dueCount++;
+                    }
+                }
+                System.out.println("Vehicles over 80,000 km (Iterator): " + dueCount);
+
+                double revenue = rentalService.getRentalHistory().stream()
+                        .mapToDouble(r -> r.getPriceBreakdown().getTotalPrice())
+                        .sum();
                 System.out.println("Total revenue collected: " + revenue + "$");
-                double utilization = ReportService.calculateUtilizationRate(currentFleet, rentalService.getActiveRentedVehicleIds());
+
+                double utilization = fleet.size() > 0 ? ((double) rentalService.getActiveRentedVehicleIds().size() / fleet.size()) * 100.0 : 0.0;
                 System.out.println("Fleet utilization rate: " + String.format("%.2f", utilization) + "%");
             } else if ("6".equals(input)) {
                 System.out.println("\n--- Pricing Policies Discovered via Reflection ---");
-                List<String> policies = PolicyInspector.inspectPolicies(HourlyPricingPolicy.class, DailyPricingPolicy.class, WeeklyPricingPolicy.class);
-                for (String p : policies) {
-                    System.out.println("Available option: " + p);
+                Class<?>[] policies = { HourlyPricingPolicy.class, DailyPricingPolicy.class, WeeklyPricingPolicy.class };
+                for (Class<?> p : policies) {
+                    if (p.isAnnotationPresent(PricingOption.class)) {
+                        PricingOption opt = p.getAnnotation(PricingOption.class);
+                        System.out.println("Available option: " + opt.value() + " : " + p.getSimpleName());
+                    }
                 }
             } else if ("7".equals(input)) {
                 System.out.println("\n--- Concurrent Rental Request Simulation (Module 9) ---");
@@ -165,15 +175,32 @@ public class MainApp {
                     RentalService simService = new RentalService(simVehicleRepo, simCustomerRepo);
 
                     Vehicle testCar = new FuelCar(999, "Toyota", "Corolla", 10000.0, "Available", 60.0, "Simulation", 180.0, 9.0, "Manual", 5, 300, 5, 100.0);
-                    Customer c1 = new Customer(1, "Customer-Thread-1", "t1@test.com", "111");
-                    Customer c2 = new Customer(2, "Customer-Thread-2", "t2@test.com", "222");
-
                     simVehicleRepo.add(testCar);
-                    simCustomerRepo.add(c1);
-                    simCustomerRepo.add(c2);
+                    simCustomerRepo.add(new Customer(1, "Customer 1", "c1@test.com", "111"));
+                    simCustomerRepo.add(new Customer(2, "Customer 2", "c2@test.com", "222"));
 
-                    SimulationResult res = ConcurrencySimulator.simulateConcurrentRent(simService, 999, 1, 2, new DailyPricingPolicy());
-                    System.out.println("Simulation result: Successes=" + res.getSuccessCount() + ", Failures=" + res.getFailureCount() + ", Exactly one success=" + res.isExactlyOneSuccess());
+                    int[] successCounter = new int[1];
+                    Thread t1 = new Thread(() -> {
+                        try {
+                            simService.rentVehicle(1, 999, 1, new DailyPricingPolicy());
+                            synchronized (successCounter) { successCounter[0]++; }
+                        } catch (Exception ignored) {}
+                    });
+                    Thread t2 = new Thread(() -> {
+                        try {
+                            simService.rentVehicle(2, 999, 1, new DailyPricingPolicy());
+                            synchronized (successCounter) { successCounter[0]++; }
+                        } catch (Exception ignored) {}
+                    });
+
+                    t1.start();
+                    t2.start();
+                    t1.join();
+                    t2.join();
+
+                    int successes = successCounter[0];
+                    int failures = 2 - successes;
+                    System.out.println("Simulation result: Successes=" + successes + ", Failures=" + failures + ", Exactly one success=" + (successes == 1));
                 } catch (InterruptedException e) {
                     System.out.println("Simulation interrupted: " + e.getMessage());
                 }

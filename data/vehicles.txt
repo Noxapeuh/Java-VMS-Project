@@ -3,4 +3,3 @@ TRUCK,2,Volvo,FH,120000.0,Available,150.0
 MOTORBIKE,3,Yamaha,MT-07,15000.0,Available,45.0
 CAR,4,Tesla,Model 3,25000.0,Available,90.0
 CAR,5,BMW,Series 3,85000.0,Available,80.0
-

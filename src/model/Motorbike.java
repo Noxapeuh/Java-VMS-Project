@@ -1,7 +1,7 @@
 package model;
 
 import contract.Rentable;
-import exception.IsNotRentable;
+import exception.RentalException;
 
 public class Motorbike extends Vehicle implements Rentable {
     private String fuel;
@@ -66,7 +66,7 @@ public class Motorbike extends Vehicle implements Rentable {
     @Override
     public boolean isRentable() {
         if (!getStatus().equalsIgnoreCase("Available")) {
-            throw new IsNotRentable("The vehicle can't be rented");
+            throw new RentalException("The vehicle can't be rented");
         }
         return true;
     }
@@ -74,7 +74,7 @@ public class Motorbike extends Vehicle implements Rentable {
     @Override
     public void rent() {
         if (!isRentable()) {
-            throw new IsNotRentable("The vehicle is not rentable");
+            throw new RentalException("The vehicle is not rentable");
         }
         setStatus("Rented");
     }

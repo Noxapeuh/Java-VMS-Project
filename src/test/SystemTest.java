@@ -1,7 +1,5 @@
 package test;
 
-import concurrent.ConcurrencySimulator;
-import concurrent.ConcurrencySimulator.SimulationResult;
 import contract.PricingPolicy;
 import exception.RentalException;
 import model.Customer;
@@ -172,8 +170,26 @@ public class SystemTest {
         customerRepo.add(c2);
 
         try {
-            SimulationResult result = ConcurrencySimulator.simulateConcurrentRent(service, 105, 1, 2, new DailyPricingPolicy());
-            boolean exactlyOne = result.isExactlyOneSuccess();
+            int[] successCounter = new int[1];
+            Thread t1 = new Thread(() -> {
+                try {
+                    service.rentVehicle(1, 105, 1, new DailyPricingPolicy());
+                    synchronized (successCounter) { successCounter[0]++; }
+                } catch (Exception ignored) {}
+            });
+            Thread t2 = new Thread(() -> {
+                try {
+                    service.rentVehicle(2, 105, 1, new DailyPricingPolicy());
+                    synchronized (successCounter) { successCounter[0]++; }
+                } catch (Exception ignored) {}
+            });
+
+            t1.start();
+            t2.start();
+            t1.join();
+            t2.join();
+
+            boolean exactlyOne = successCounter[0] == 1;
             boolean vehicleRented = "Rented".equalsIgnoreCase(car.getStatus());
             boolean activeSetSize = service.getActiveRentedVehicleIds().size() == 1;
 
