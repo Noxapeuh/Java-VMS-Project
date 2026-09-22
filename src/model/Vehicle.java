@@ -1,7 +1,6 @@
 package model;
 
 import contract.Identifiable;
-import java.util.Objects;
 
 public abstract class Vehicle implements Identifiable, Comparable<Vehicle> {
     private final int id;
@@ -72,14 +71,7 @@ public abstract class Vehicle implements Identifiable, Comparable<Vehicle> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Vehicle)) return false;
-        Vehicle vehicle = (Vehicle) o;
-        return id == vehicle.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+        Vehicle other = (Vehicle) o;
+        return this.id == other.id;
     }
 }

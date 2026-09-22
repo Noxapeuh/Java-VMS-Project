@@ -1,7 +1,6 @@
 package model;
 
 import contract.Identifiable;
-import java.util.Objects;
 
 public class Customer implements Identifiable {
     private final int id;
@@ -47,15 +46,8 @@ public class Customer implements Identifiable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Customer)) return false;
-        Customer customer = (Customer) o;
-        return id == customer.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+        Customer other = (Customer) o;
+        return this.id == other.id;
     }
 
     @Override

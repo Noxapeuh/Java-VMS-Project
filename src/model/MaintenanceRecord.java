@@ -1,7 +1,6 @@
 package model;
 
 import contract.Identifiable;
-import java.util.Objects;
 
 public class MaintenanceRecord implements Identifiable {
     private final int id;
@@ -63,15 +62,8 @@ public class MaintenanceRecord implements Identifiable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MaintenanceRecord)) return false;
-        MaintenanceRecord that = (MaintenanceRecord) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+        MaintenanceRecord other = (MaintenanceRecord) o;
+        return this.id == other.id;
     }
 
     @Override

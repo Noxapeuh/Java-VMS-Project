@@ -24,35 +24,9 @@ public class Rental {
             this.totalPrice = totalPrice;
         }
 
-        public double getBaseRate() {
-            return baseRate;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public String getPolicyName() {
-            return policyName;
-        }
-
         public double getTotalPrice() {
             return totalPrice;
         }
-
-        @Override
-        public String toString() {
-            return "PriceBreakdown{" +
-                    "baseRate=" + baseRate +
-                    ", duration=" + duration +
-                    ", policyName='" + policyName + '\'' +
-                    ", totalPrice=" + totalPrice +
-                    '}';
-        }
-    }
-
-    public Rental() {
-        this("RENT-" + System.currentTimeMillis(), new Customer(0, "Guest", "", ""), null, 1, new PriceBreakdown(0.0, 1, "Standard", 0.0), "Pending");
     }
 
     public Rental(String rentalId, Customer customer, Vehicle vehicle, int period, PriceBreakdown priceBreakdown, String status) {
@@ -64,28 +38,12 @@ public class Rental {
         this.status = status;
     }
 
-    public Rental(String rentalId, Vehicle vehicle, String customerName, int period, String status) {
-        this(rentalId, new Customer(0, customerName, "", ""), vehicle, period, new PriceBreakdown(vehicle != null ? vehicle.getRateData() : 0.0, period, "Standard", (vehicle != null ? vehicle.getRateData() : 0.0) * period), status);
-    }
-
     public String getRentalId() {
         return rentalId;
     }
 
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public String getCustomerName() {
-        return customer != null ? customer.getName() : "";
-    }
-
     public Vehicle getVehicle() {
         return vehicle;
-    }
-
-    public int getPeriod() {
-        return period;
     }
 
     public PriceBreakdown getPriceBreakdown() {
@@ -93,10 +51,7 @@ public class Rental {
     }
 
     public String getQuote() {
-        if (priceBreakdown != null) {
-            return priceBreakdown.getTotalPrice() + "$";
-        }
-        return (vehicle != null ? vehicle.getRateData() * period : 0.0) + "$";
+        return priceBreakdown != null ? String.format(java.util.Locale.US, "%.2f$", priceBreakdown.getTotalPrice()) : "0.00$";
     }
 
     public String getStatus() {
@@ -105,17 +60,5 @@ public class Rental {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "Rental{" +
-                "rentalId='" + rentalId + '\'' +
-                ", customer=" + getCustomerName() +
-                ", vehicle=" + (vehicle != null ? vehicle.getModel() : "null") +
-                ", period=" + period +
-                ", quote='" + getQuote() + '\'' +
-                ", status='" + status + '\'' +
-                '}';
     }
 }

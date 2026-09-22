@@ -53,7 +53,7 @@ public class Truck extends Vehicle implements Rentable {
 
     @Override
     public boolean isRentable() {
-        if (!"Available".equalsIgnoreCase(getStatus())) {
+        if (!getStatus().equalsIgnoreCase("Available")) {
             throw new RentalException("The vehicle can't be rented");
         }
         return true;

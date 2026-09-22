@@ -1,13 +1,12 @@
 package service;
 
 import contract.PricingPolicy;
-import contract.Rentable;
 import exception.RentalException;
 import model.Customer;
 import model.Vehicle;
 import rental.Rental;
 import rental.Rental.PriceBreakdown;
-import repository.Repository;
+import repository.GenericRepository;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,111 +14,58 @@ import java.util.List;
 import java.util.Set;
 
 public class RentalService {
-    private final Repository<Vehicle> vehicleRepository;
-    private final Repository<Customer> customerRepository;
+    private final GenericRepository<Vehicle> vehicleRepo;
+    private final GenericRepository<Customer> customerRepo;
     private final List<Rental> rentalHistory = new ArrayList<>();
     private final Set<Integer> activeRentedVehicleIds = new HashSet<>();
-    private final Set<Integer> maintenanceDueVehicleIds = new HashSet<>();
-    private final Object lock = new Object();
 
-    public RentalService(Repository<Vehicle> vehicleRepository, Repository<Customer> customerRepository) {
-        this.vehicleRepository = vehicleRepository;
-        this.customerRepository = customerRepository;
+    public RentalService(GenericRepository<Vehicle> vehicleRepo, GenericRepository<Customer> customerRepo) {
+        this.vehicleRepo = vehicleRepo;
+        this.customerRepo = customerRepo;
     }
 
     public PriceBreakdown calculateQuote(int vehicleId, int period, PricingPolicy policy) {
-        Vehicle v = vehicleRepository.getById(vehicleId);
-        if (v == null) {
-            throw new RentalException("Vehicle not found: " + vehicleId);
-        }
-        if (period <= 0) {
-            throw new RentalException("Rental period must be positive: " + period);
-        }
-        double total = policy.calculateQuote(v.getRateData(), period);
-        return new PriceBreakdown(v.getRateData(), period, policy.getName(), total);
+        Vehicle v = vehicleRepo.getById(vehicleId);
+        if (v == null) throw new RentalException("Vehicle not found");
+        if (period <= 0) throw new RentalException("Period must be positive");
+        double price = policy.calculateQuote(v.getRateData(), period);
+        return new PriceBreakdown(v.getRateData(), period, policy.getName(), price);
     }
 
-    public Rental rentVehicle(int customerId, int vehicleId, int period, PricingPolicy policy) {
-        synchronized (lock) {
-            Vehicle v = vehicleRepository.getById(vehicleId);
-            if (v == null) {
-                throw new RentalException("Vehicle not found: " + vehicleId);
-            }
-            if (activeRentedVehicleIds.contains(vehicleId) || !"Available".equalsIgnoreCase(v.getStatus())) {
-                throw new RentalException("Vehicle is not available for rental: " + vehicleId);
-            }
-            if (maintenanceDueVehicleIds.contains(vehicleId) || "Maintenance".equalsIgnoreCase(v.getStatus())) {
-                throw new RentalException("Vehicle is under maintenance: " + vehicleId);
-            }
-            Customer c = customerRepository.getById(customerId);
-            if (c == null) {
-                throw new RentalException("Customer not found: " + customerId);
-            }
-            if (period <= 0) {
-                throw new RentalException("Invalid rental period: " + period);
-            }
-
-            PriceBreakdown breakdown = calculateQuote(vehicleId, period, policy);
-
-            if (v instanceof Rentable) {
-                ((Rentable) v).rent();
-            } else {
-                v.setStatus("Rented");
-            }
-
-            activeRentedVehicleIds.add(vehicleId);
-            String rentalId = "RENT-" + System.currentTimeMillis() + "-" + vehicleId;
-            Rental rental = new Rental(rentalId, c, v, period, breakdown, "Active");
-            rentalHistory.add(rental);
-            return rental;
+    public synchronized Rental rentVehicle(int customerId, int vehicleId, int period, PricingPolicy policy) {
+        Vehicle v = vehicleRepo.getById(vehicleId);
+        if (v == null || !v.getStatus().equalsIgnoreCase("Available")) {
+            throw new RentalException("Vehicle not available");
         }
+        Customer c = customerRepo.getById(customerId);
+        if (period <= 0) throw new RentalException("Invalid period");
+
+        PriceBreakdown quote = calculateQuote(vehicleId, period, policy);
+        v.setStatus("Rented");
+        activeRentedVehicleIds.add(vehicleId);
+
+        Rental rental = new Rental("RENT-" + (rentalHistory.size() + 1), c, v, period, quote, "Active");
+        rentalHistory.add(rental);
+        return rental;
     }
 
-    public void returnVehicle(String rentalId) {
-        synchronized (lock) {
-            Rental found = null;
-            for (Rental r : rentalHistory) {
-                if (r.getRentalId().equals(rentalId) && "Active".equalsIgnoreCase(r.getStatus())) {
-                    found = r;
-                    break;
-                }
+    public synchronized void returnVehicle(String rentalId) {
+        for (Rental r : rentalHistory) {
+            if (r.getRentalId().equalsIgnoreCase(rentalId) && r.getStatus().equalsIgnoreCase("Active")) {
+                r.getVehicle().setStatus("Available");
+                activeRentedVehicleIds.remove(r.getVehicle().getId());
+                r.setStatus("Completed");
+                return;
             }
-            if (found == null) {
-                throw new RentalException("Active rental not found with ID: " + rentalId);
-            }
-            Vehicle v = found.getVehicle();
-            if (v instanceof Rentable) {
-                ((Rentable) v).returnVehicle();
-            } else {
-                v.setStatus("Available");
-            }
-            activeRentedVehicleIds.remove(v.getId());
-            found.setStatus("Completed");
         }
+        throw new RentalException("Rental not found");
     }
 
-    public void markMaintenanceDue(int vehicleId) {
-        synchronized (lock) {
-            Vehicle v = vehicleRepository.getById(vehicleId);
-            if (v == null) {
-                throw new RentalException("Vehicle not found: " + vehicleId);
-            }
-            if (activeRentedVehicleIds.contains(vehicleId)) {
-                throw new RentalException("Cannot set maintenance for currently rented vehicle: " + vehicleId);
-            }
-            maintenanceDueVehicleIds.add(vehicleId);
-            v.setStatus("Maintenance");
-        }
-    }
-
-    public void clearMaintenance(int vehicleId) {
-        synchronized (lock) {
-            maintenanceDueVehicleIds.remove(vehicleId);
-            Vehicle v = vehicleRepository.getById(vehicleId);
-            if (v != null) {
-                v.setStatus("Available");
-            }
-        }
+    public synchronized void markMaintenanceDue(int vehicleId) {
+        Vehicle v = vehicleRepo.getById(vehicleId);
+        if (v == null) throw new RentalException("Vehicle not found");
+        if (activeRentedVehicleIds.contains(vehicleId)) throw new RentalException("Vehicle is rented");
+        v.setStatus("Maintenance");
     }
 
     public List<Rental> getRentalHistory() {
@@ -128,9 +74,5 @@ public class RentalService {
 
     public Set<Integer> getActiveRentedVehicleIds() {
         return activeRentedVehicleIds;
-    }
-
-    public Set<Integer> getMaintenanceDueVehicleIds() {
-        return maintenanceDueVehicleIds;
     }
 }
