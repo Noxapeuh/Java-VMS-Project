@@ -10,6 +10,7 @@ import repository.GenericRepository;
 import service.*;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -108,7 +109,18 @@ public class MainApp {
                 double totalMoney = rentalService.getRentalHistory().stream()
                         .mapToDouble(r -> r.getPriceBreakdown().getTotalPrice())
                         .sum();
+
+                int needMaintenance = 0;
+                Iterator<Vehicle> it = fleet.iterator();
+                while (it.hasNext()) {
+                    Vehicle v = it.next();
+                    if (v.getMileage() >= 80000) {
+                        needMaintenance++;
+                    }
+                }
+
                 System.out.println("Available vehicles: " + available + "/" + fleet.size());
+                System.out.println("Vehicles over 80k km (Iterator): " + needMaintenance);
                 System.out.println("Total revenue: " + totalMoney + "$");
 
             } else if (choice.equals("6")) {
